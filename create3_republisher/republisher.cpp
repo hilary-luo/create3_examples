@@ -342,10 +342,11 @@ private:
         if (robot_namespace.empty()) {
             throw std::runtime_error("The 'robot_namespace' parameter can't be an empty string");
         }
-        if (robot_namespace[0] != '/') {
-            throw std::runtime_error("The 'robot_namespace' parameter must be a fully qualified name (start with '/')");
-        }
         const std::string this_namespace = this->get_namespace();
+        if (robot_namespace[0] != '/') {
+            // If the robot namespace is not fully qualified, make it relative to this node's namespace
+            robot_namespace = this_namespace + "/" + robot_namespace;
+        }
         if (robot_namespace == this->get_namespace()) {
             throw std::runtime_error("The republisher node must have a different namespace from the robot!");
         }
