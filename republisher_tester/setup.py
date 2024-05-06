@@ -20,7 +20,8 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'delay_tester = republisher_tester.delay_tester:main'
+            'delay_tester = republisher_tester.delay_tester:main',
+            'cmd_vel_repub = republisher_tester.cmd_vel_repub:main'
         ],
     },
 )

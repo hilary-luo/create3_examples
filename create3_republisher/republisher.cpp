@@ -139,18 +139,26 @@ private:
             published_topic,
             topic_type,
             rclcpp::QoS(1).durability(rclcpp::DurabilityPolicy::TransientLocal));
-        
+
         auto subscriber = this->create_generic_subscription(
             subscribed_topic,
             topic_type,
             rclcpp::QoS(1).durability(rclcpp::DurabilityPolicy::Volatile).reliability(rclcpp::ReliabilityPolicy::BestEffort),
             [this, publisher=publisher](std::shared_ptr<rclcpp::SerializedMessage> message) {
-                publisher->publish(*message);
+                this->repub_callback(publisher, message);
             }
         );
 
         m_publishers.push_back(publisher);
         m_subscriptions.push_back(subscriber);
+    }
+
+    void repub_callback(
+        rclcpp::GenericPublisher::SharedPtr publisher,
+        std::shared_ptr<rclcpp::SerializedMessage> message)
+    {
+        if (publisher->get_subscription_count() > 0)
+            publisher->publish(*message);
     }
 
     void setup_service_republisher(
